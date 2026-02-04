@@ -15,7 +15,11 @@ final class PostListViewModel {
     var isLoading: Bool = false
     var errorMessage: String?
     
-    private let service = PostService()
+    private let service: PostServiceProtocol
+    
+    init(service: PostServiceProtocol) {
+        self.service = service
+    }
     
     func fetch() async {
         isLoading = true

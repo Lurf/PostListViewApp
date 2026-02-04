@@ -7,8 +7,13 @@
 
 import SwiftUI
 
+@MainActor
 struct PostListView: View {
-    @State private var viewModel = PostListViewModel()
+    @State private var viewModel: PostListViewModel
+    
+    init(viewModel: PostListViewModel) {
+        self.viewModel = viewModel
+    }
     
     var body: some View {
         NavigationStack {
@@ -47,5 +52,11 @@ struct PostListView: View {
 }
 
 #Preview {
-    PostListView()
+    PostListView(
+        viewModel: PostListViewModel(
+            service: MockPostService(
+                posts: MockPostService.sampleData
+            )
+        )
+    )
 }
