@@ -28,13 +28,15 @@ struct PostListView: View {
                     )
                 } else {
                     List(viewModel.posts) { post in
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(post.title)
-                                .font(.headline)
-                            Text(post.body)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                                .lineLimit(2)
+                        NavigationLink(value: post) {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(post.title)
+                                    .font(.headline)
+                                Text(post.body)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                    .lineLimit(2)
+                            }   
                         }
                         .padding(.vertical, 4)
                     }
@@ -46,6 +48,9 @@ struct PostListView: View {
             }
             .refreshable {
                 await viewModel.fetch()
+            }
+            .navigationDestination(for: Post.self) { post in
+                PostDetailView(viewModel: PostDetailViewModel(post: post))
             }
         }
     }
