@@ -11,6 +11,7 @@ private let baseURL = "https://jsonplaceholder.typicode.com/posts"
 
 protocol PostServiceProtocol: Sendable {
     func fetchPosts() async throws -> [Post]
+    func fetchComments(for postID: Int) async throws -> [PostComment]
 }
 
 struct PostService: PostServiceProtocol {
@@ -29,5 +30,15 @@ struct PostService: PostServiceProtocol {
         } catch {
             throw APIError.networkError(error)
         }
+    }
+    
+    func fetchComments(for postID: Int) async throws -> [PostComment] {
+        let urlString = "\(baseURL)/\(postID)/comments"
+        guard let url = URL(string: urlString) else {
+            throw APIError.invalidURL
+        }
+        
+        let (data, _) = try await URLSession.shared.data(from: url)
+        return try JSONDecoder().decode([PostComment].self, from: data)
     }
 }

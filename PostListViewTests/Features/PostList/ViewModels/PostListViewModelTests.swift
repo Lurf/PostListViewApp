@@ -36,7 +36,7 @@ struct PostListViewModelTests {
     
     @Test("異常系: 通信エラーが発生した場合、エラーメッセージをセットする")
     func fetchPostsFailure() async {
-        let mockService = MockPostService(result: .failure(APIError.decodeError))
+        let mockService = MockPostService(postsResult: .failure(APIError.decodeError))
         let viewModel = PostListViewModel(service: mockService)
 
         await viewModel.fetch()
@@ -60,6 +60,10 @@ struct PostListViewModelTests {
                 // streamがfinishされるまでここで待機し続ける
                 for await _ in stream { break }
                 return []
+            }
+            
+            func fetchComments(for postID: Int) async throws -> [PostComment] {
+                []
             }
         }
 
