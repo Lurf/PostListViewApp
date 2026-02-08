@@ -50,7 +50,12 @@ struct PostListView: View {
                 await viewModel.fetch()
             }
             .navigationDestination(for: Post.self) { post in
-                PostDetailView(viewModel: PostDetailViewModel(post: post))
+                PostDetailView(
+                    viewModel: PostDetailViewModel(
+                        post: post,
+                        service: PostService()
+                    )
+                )
             }
         }
     }

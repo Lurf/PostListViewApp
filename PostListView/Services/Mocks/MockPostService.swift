@@ -9,26 +9,44 @@ import Foundation
 
 #if DEBUG
 
-struct MockPostService: PostServiceProtocol, Sendable {
-    let result: Result<[Post], Error>
+struct MockPostService: PostFetching, CommentFetching, Sendable {
+    let postsResult: Result<[Post], Error>
+    let commentsResult: Result<[PostComment], Error>
     
-    init(result: Result<[Post], Error> = .success([])) {
-        self.result = result
+    init(
+        postsResult: Result<[Post], Error> = .success([]),
+        commentsResult: Result<[PostComment], Error> = .success([])
+    ) {
+        self.postsResult = postsResult
+        self.commentsResult = commentsResult
     }
     
-    init(posts: [Post]) {
-        self.result = .success(posts)
+    init(posts: [Post] = [], comments: [PostComment] = []) {
+        self.postsResult = .success(posts)
+        self.commentsResult = .success(comments)
     }
 
     func fetchPosts() async throws -> [Post] {
-        try await Task.sleep(for: .seconds(0.5))
+        try await Task.sleep(for: .seconds(0.1))
         
-        switch result {
+        switch postsResult {
         case .success(let posts):
             return posts
         case .failure(let error):
             throw error
         }
+    }
+    
+    func fetchComments(for postID: Int) async throws -> [PostComment] {
+        try await Task.sleep(for: .seconds(0.1))
+        
+        switch commentsResult {
+        case .success(let comments):
+            return comments
+        case .failure(let error):
+            throw error
+        }
+
     }
 }
 
@@ -39,7 +57,7 @@ extension MockPostService {
     ]
     
     static let success = MockPostService(posts: sampleData)
-    static let failure = MockPostService(result: .failure(APIError.decodeError))
+    static let failure = MockPostService(postsResult: .failure(APIError.decodeError))
 }
 
 #endif

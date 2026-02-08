@@ -12,7 +12,28 @@ import Observation
 final class PostDetailViewModel {
     let post: Post
     
-    init(post: Post) {
+    var comments = [PostComment]()
+    var isLoading = false
+    var errorMessage: String?
+    
+    private let service: CommentFetching
+
+    init(post: Post, service: CommentFetching) {
         self.post = post
+        self.service = service
+    }
+    
+    func fetchComments() async {
+        guard comments.isEmpty else { return }
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            comments = try await service.fetchComments(for: post.id)
+        } catch {
+            errorMessage = "コメントの読み込みに失敗しました"
+        }
+        
+        isLoading = false
     }
 }

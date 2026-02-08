@@ -15,9 +15,9 @@ final class PostListViewModel {
     var isLoading: Bool = false
     var errorMessage: String?
     
-    private let service: PostServiceProtocol
+    private let service: PostFetching
     
-    init(service: PostServiceProtocol) {
+    init(service: PostFetching) {
         self.service = service
     }
     
