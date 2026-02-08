@@ -9,7 +9,7 @@ import Foundation
 
 #if DEBUG
 
-struct MockPostService: PostServiceProtocol, Sendable {
+struct MockPostService: PostFetching, CommentFetching, Sendable {
     let postsResult: Result<[Post], Error>
     let commentsResult: Result<[PostComment], Error>
     

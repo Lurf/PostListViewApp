@@ -16,9 +16,9 @@ final class PostDetailViewModel {
     var isLoading = false
     var errorMessage: String?
     
-    private let service: PostServiceProtocol
+    private let service: CommentFetching
 
-    init(post: Post, service: PostServiceProtocol) {
+    init(post: Post, service: CommentFetching) {
         self.post = post
         self.service = service
     }

@@ -9,12 +9,15 @@ import Foundation
 
 private let baseURL = "https://jsonplaceholder.typicode.com/posts"
 
-protocol PostServiceProtocol: Sendable {
+protocol PostFetching: Sendable {
     func fetchPosts() async throws -> [Post]
+}
+
+protocol CommentFetching: Sendable {
     func fetchComments(for postID: Int) async throws -> [PostComment]
 }
 
-struct PostService: PostServiceProtocol {
+struct PostService: PostFetching, CommentFetching {
     init() {}
     
     func fetchPosts() async throws -> [Post] {

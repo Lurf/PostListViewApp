@@ -53,17 +53,13 @@ struct PostListViewModelTests {
     func checkLoadingStateDuringFetch() async {
         let (stream, continuation) = AsyncStream<Void>.makeStream()
 
-        struct PausableMock: PostServiceProtocol {
+        struct PausableMock: PostFetching {
             let stream: AsyncStream<Void>
 
             func fetchPosts() async throws -> [Post] {
                 // streamがfinishされるまでここで待機し続ける
                 for await _ in stream { break }
                 return []
-            }
-            
-            func fetchComments(for postID: Int) async throws -> [PostComment] {
-                []
             }
         }
 
