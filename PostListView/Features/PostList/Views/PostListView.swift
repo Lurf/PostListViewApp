@@ -11,8 +11,11 @@ import SwiftUI
 struct PostListView: View {
     @State private var viewModel: PostListViewModel
     
-    init(viewModel: PostListViewModel) {
-        self.viewModel = viewModel
+    private let service: PostService
+    
+    init(service: PostService) {
+        self.service = service
+        _viewModel = State(initialValue: PostListViewModel(service: service))
     }
     
     var body: some View {
@@ -53,7 +56,7 @@ struct PostListView: View {
                 PostDetailView(
                     viewModel: PostDetailViewModel(
                         post: post,
-                        service: PostService()
+                        service: service
                     )
                 )
             }
@@ -62,11 +65,5 @@ struct PostListView: View {
 }
 
 #Preview {
-    PostListView(
-        viewModel: PostListViewModel(
-            service: MockPostService(
-                posts: MockPostService.sampleData
-            )
-        )
-    )
+    PostListView(service: PostService())
 }
