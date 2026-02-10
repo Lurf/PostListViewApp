@@ -19,8 +19,11 @@ protocol CommentFetching: Sendable {
 
 struct PostService: PostFetching, CommentFetching, Sendable {
     private let commentCache = CommentCache()
+    private let session: URLSession
     
-    init() {}
+    init(session: URLSession = .shared) {
+        self.session = session
+    }
     
     func fetchPosts() async throws -> [Post] {
         guard let url = URL(string: baseURL) else {
@@ -28,7 +31,7 @@ struct PostService: PostFetching, CommentFetching, Sendable {
         }
         
         do {
-            let (data, _) = try await URLSession.shared.data(from: url)
+            let (data, _) = try await session.data(from: url)
             return try JSONDecoder().decode([Post].self, from: data)
         } catch _ as DecodingError {
             throw APIError.decodeError
@@ -49,7 +52,7 @@ struct PostService: PostFetching, CommentFetching, Sendable {
             throw APIError.invalidURL
         }
         
-        let (data, _) = try await URLSession.shared.data(from: url)
+        let (data, _) = try await session.data(from: url)
         let comments = try JSONDecoder().decode([PostComment].self, from: data)
         
         await commentCache.set(comments, for: postID)
