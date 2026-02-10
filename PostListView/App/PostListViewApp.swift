@@ -11,7 +11,7 @@ import SwiftUI
 struct PostListViewApp: App {
     var body: some Scene {
         WindowGroup {
-            PostListView(viewModel: PostListViewModel(service: PostService()))
+            PostListView(service: PostService())
         }
     }
 }
