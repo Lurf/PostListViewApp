@@ -52,8 +52,8 @@ struct MockPostService: PostFetching, CommentFetching, Sendable {
 
 extension MockPostService {
     static let sampleData = [
-        Post(id: 1, title: "テスト投稿1", body: "これはテストです。"),
-        Post(id: 2, title: "テスト投稿2", body: "Mockデータを利用しています。")
+        Post(userId: 1, id: 1, title: "テスト投稿1", body: "これはテストです。"),
+        Post(userId: 2, id: 2, title: "テスト投稿2", body: "Mockデータを利用しています。")
     ]
     
     static let success = MockPostService(posts: sampleData)

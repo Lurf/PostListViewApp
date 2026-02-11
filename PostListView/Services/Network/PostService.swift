@@ -7,7 +7,9 @@
 
 import Foundation
 
-private let baseURL = "https://jsonplaceholder.typicode.com/posts"
+private let postsURL = "https://jsonplaceholder.typicode.com/posts"
+private let usersURL = "https://jsonplaceholder.typicode.com/users"
+
 
 protocol PostFetching: Sendable {
     func fetchPosts() async throws -> [Post]
@@ -17,7 +19,11 @@ protocol CommentFetching: Sendable {
     func fetchComments(for postID: Int) async throws -> [PostComment]
 }
 
-struct PostService: PostFetching, CommentFetching, Sendable {
+protocol UserFetching: Sendable {
+    func fetchUsers() async throws -> [User]
+}
+
+struct PostService: PostFetching, CommentFetching, UserFetching, Sendable {
     private let commentCache = CommentCache()
     private let session: URLSession
     
@@ -26,7 +32,7 @@ struct PostService: PostFetching, CommentFetching, Sendable {
     }
     
     func fetchPosts() async throws -> [Post] {
-        guard let url = URL(string: baseURL) else {
+        guard let url = URL(string: postsURL) else {
             throw APIError.invalidURL
         }
         
@@ -47,7 +53,7 @@ struct PostService: PostFetching, CommentFetching, Sendable {
         }
         
         print("🚀 API Request:: Post \(postID)")
-        let urlString = "\(baseURL)/\(postID)/comments"
+        let urlString = "\(postsURL)/\(postID)/comments"
         guard let url = URL(string: urlString) else {
             throw APIError.invalidURL
         }
@@ -58,5 +64,14 @@ struct PostService: PostFetching, CommentFetching, Sendable {
         await commentCache.set(comments, for: postID)
         
         return comments
+    }
+    
+    func fetchUsers() async throws -> [User] {
+        guard let url = URL(string: usersURL) else {
+            throw APIError.invalidURL
+        }
+        
+        let (data, _) = try await session.data(from: url)
+        return try JSONDecoder().decode([User].self, from: data)
     }
 }
