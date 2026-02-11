@@ -5,25 +5,33 @@
 //  Created by Lurf on 2026/02/04.
 //
 
+#if DEBUG
 import Foundation
 
-#if DEBUG
 
-struct MockPostService: PostFetching, CommentFetching, Sendable {
+struct MockPostService: PostFetching, CommentFetching, UserFetching, Sendable {
     let postsResult: Result<[Post], Error>
     let commentsResult: Result<[PostComment], Error>
+    let userResult: Result<[User], Error>
     
     init(
         postsResult: Result<[Post], Error> = .success([]),
-        commentsResult: Result<[PostComment], Error> = .success([])
+        commentsResult: Result<[PostComment], Error> = .success([]),
+        userResult: Result<[User], Error> = .success([])
     ) {
         self.postsResult = postsResult
         self.commentsResult = commentsResult
+        self.userResult = userResult
     }
     
-    init(posts: [Post] = [], comments: [PostComment] = []) {
+    init(
+        posts: [Post] = [], 
+        comments: [PostComment] = [], 
+        users: [User] = []
+    ) {
         self.postsResult = .success(posts)
         self.commentsResult = .success(comments)
+        self.userResult = .success(users)
     }
 
     func fetchPosts() async throws -> [Post] {
@@ -46,7 +54,15 @@ struct MockPostService: PostFetching, CommentFetching, Sendable {
         case .failure(let error):
             throw error
         }
-
+    }
+    
+    func fetchUsers() async throws -> [User] {
+        switch userResult {
+        case .success(let users):
+            return users
+        case .failure(let error):
+            throw error
+        }
     }
 }
 

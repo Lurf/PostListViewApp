@@ -12,7 +12,7 @@ import Foundation
 @Suite("PostDetailViewModelのテスト")
 @MainActor
 struct PostDetailViewModelTests {
-    let testPost = Post(id: 1, title: "Test Post", body: "Body")
+    let testPost = Post(userId:1, id: 1, title: "Test Post", body: "Body")
     let testCommets = [
         PostComment(id: 1, postId: 1, name: "User1", email: "user1@user.com", body: "Nice post!"),
         PostComment(id: 2, postId: 1, name: "User2", email: "user2@user.com", body: "Good one!")

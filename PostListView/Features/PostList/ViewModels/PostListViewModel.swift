@@ -60,6 +60,7 @@ private extension PostListViewModel {
                 $0.userId == selectedUser.id
             }
         } else {
+            // Allを押したときにnilを返すようにしているため、こちらで全件取得に戻る
             displayPosts = allPosts
         }
     }
