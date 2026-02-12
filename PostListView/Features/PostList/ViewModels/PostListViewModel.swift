@@ -11,13 +11,23 @@ import Observation
 @Observable
 @MainActor
 final class PostListViewModel {
-    var posts = [Post]()
+    var allPosts = [Post]()
+    var displayPosts = [Post]()
+    
+    var users = [User]()
+    var selectedUser: User? = nil {
+        didSet {
+            filterPosts()
+        }
+    }
+    
+    
     var isLoading: Bool = false
     var errorMessage: String?
     
-    private let service: PostFetching
+    private let service: PostFetching & UserFetching
     
-    init(service: PostFetching) {
+    init(service: PostFetching & UserFetching) {
         self.service = service
     }
     
@@ -26,11 +36,32 @@ final class PostListViewModel {
         errorMessage = nil
         
         do {
-            posts = try await service.fetchPosts()
+            async let postsTask = service.fetchPosts()
+            async let usersTask = service.fetchUsers()
+            
+            let (fetchedPosts, fetchedUsers) = try await (postsTask, usersTask)
+            
+            allPosts = fetchedPosts
+            users = fetchedUsers
+            
+            filterPosts()
         } catch {
             errorMessage = "データの取得に失敗しました"
         }
         
         isLoading = false
+    }
+}
+
+private extension PostListViewModel {
+    func filterPosts() {
+        if let selectedUser {
+            displayPosts = allPosts.filter {
+                $0.userId == selectedUser.id
+            }
+        } else {
+            // Allを押したときにnilを返すようにしているため、こちらで全件取得に戻る
+            displayPosts = allPosts
+        }
     }
 }

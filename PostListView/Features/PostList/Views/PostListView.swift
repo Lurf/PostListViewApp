@@ -20,28 +20,43 @@ struct PostListView: View {
     
     var body: some View {
         NavigationStack {
-            Group {
-                if viewModel.isLoading {
-                    ProgressView("読み込み中...")
-                } else if let errorMessage = viewModel.errorMessage {
-                    ContentUnavailableView(
-                        "エラー",
-                        systemImage: "exclamationmark.triangle",
-                        description: Text(errorMessage)
-                    )
-                } else {
-                    List(viewModel.posts) { post in
-                        NavigationLink(value: post) {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text(post.title)
-                                    .font(.headline)
-                                Text(post.body)
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                                    .lineLimit(2)
-                            }   
+            VStack(spacing: 0) {
+                if !viewModel.users.isEmpty {
+                    UserFilterView(
+                        users: viewModel.users, 
+                        selectedUser: viewModel.selectedUser
+                    ) { user in
+                        withAnimation { 
+                            viewModel.selectedUser = user
                         }
-                        .padding(.vertical, 4)
+                    }
+                    .background(Color(.systemBackground))
+                    Divider()
+                }
+                Group {
+                    if viewModel.isLoading {
+                        ProgressView("読み込み中...")
+                            .frame(maxHeight: .infinity)
+                    } else if let errorMessage = viewModel.errorMessage {
+                        ContentUnavailableView(
+                            "エラー",
+                            systemImage: "exclamationmark.triangle",
+                            description: Text(errorMessage)
+                        )
+                    } else {
+                        List(viewModel.displayPosts) { post in
+                            NavigationLink(value: post) {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text(post.title)
+                                        .font(.headline)
+                                    Text(post.body)
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                        .lineLimit(2)
+                                }   
+                            }
+                            .padding(.vertical, 4)
+                        }
                     }
                 }
             }
